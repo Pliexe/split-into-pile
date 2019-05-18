@@ -1,12 +1,10 @@
 class pages {
-    constructor(data, options) {
-
-        options = options || {};
+    constructor(data, size) {
 
         if((!!data) && (data.constructor === Array)) {
             this.isArray = true;
             this.elements = data;
-        } 
+        }
         else if ((!!data) && (data.constructor === Object)) {
             this.isArray = false;
             this.elements = data;
@@ -14,13 +12,12 @@ class pages {
             throw createError("Invalid data type. Please use a object or a array of elements for pages!");
         }
 
-        if(!options.size) this.size = 10;
-            else this.size = options.size;
+        this.size = size || 10;
 
         this.pages = Math.trunc((this.elements.length + this.size-1) / this.size) || Math.trunc((Object.keys(this.elements).length + this.size-1) / this.size);
     }
 
-    ArrayListPages () {
+    ArrayPages () {
 
         let ArrayListPages = [];
 
@@ -79,7 +76,7 @@ class pages {
             }
         }
 
-        
+
 
         return ObjectPages;
     }
@@ -101,13 +98,13 @@ class pages {
 
         return pageElements;
     }
-    
+
     PageExist(page) {
         if(!page) throw createError("Page number not defined. Please provide a page number.");
         if(isNaN(page)) throw createError("Invalid page number. Please specify it in numeric format");
         return Math.trunc((this.elements.length + this.size-1) / this.size) < page;
     }
-    
+
     get MaxPages() {
         return Math.trunc((this.elements.length + this.size-1) / this.size);
     }
