@@ -6,4 +6,4 @@ node_js:
   - node
 
 script:
-  - npm index.js
+  - npm test

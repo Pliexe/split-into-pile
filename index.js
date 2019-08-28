@@ -1,4 +1,13 @@
+/**
+* @exports split-into-pile.pages
+* @constructor
+* @param {Object|Array} data - Input the array or object that is going to be used for spliting into pages
+* @param {number} size - Specify how much elements can be in one page
+* @returns {class} this - Returns this class
+*/
+
 class pages {
+
     constructor(data, size) {
 
         if((!!data) && (data.constructor === Array)) {
@@ -16,6 +25,11 @@ class pages {
 
         this.pages = Math.trunc((this.elements.length + this.size-1) / this.size) || Math.trunc((Object.keys(this.elements).length + this.size-1) / this.size);
     }
+
+    /**
+     * Returns the obj/array splited into pages in array format
+     * @returns {Array} Returns array that contains elements splited into pages
+     */
 
     ArrayPages () {
 
@@ -35,6 +49,19 @@ class pages {
 
         return ArrayListPages;
     }
+
+    /**
+     * Returns the obj/array splited into pages in object format
+     * @param {object} options - Options for output
+     * @param {string} options.keyTemplate - Output with specific keyname (per page)
+     * @param {Array} options.keySchema - Array that contains every key for every new object entry (page)
+     * @example - KeyTemplate
+     * ObjectPages({ keyTemplate: '#{number}' }); // "Number" will be auto replaced with the numeric order of the elements
+     * @example - KeySchema
+     * const pages = require('split-into-pile')([2,4,3,5], 2);
+     * pages.ObjectPages({ keySchema: ['hello', 'example'] }); // Returns {'hello':[2,4], 'example': [3,5]}
+     * @returns {Object} Returns array that contains elements splited into pages
+     */
 
     ObjectPages(options) {
         let ObjectPages = {};
@@ -81,6 +108,15 @@ class pages {
         return ObjectPages;
     }
 
+    /**
+     * Get contents of specific page
+     * @param {number} page - Page number to get
+     * @example
+     * const pages = require('split-into-pile')([2,5,6,8], 2);
+     * pages.GetPageContent(2); // Returns [6, 8]
+     * @return {object|array} - Returns one page 
+     */
+
     GetPageContent(page) {
         if(!page) throw createError("Page number not defined. Please provide a page number.")
         if(isNaN(page)) throw createError("Invalid page number. Please specify it in numeric format");
@@ -99,11 +135,22 @@ class pages {
         return pageElements;
     }
 
+    /**
+     * Check if a page exists
+     * @param {number} page - Page number
+     * @returns {boolean} - Returns if the page exists
+     */
+
     PageExist(page) {
         if(!page) throw createError("Page number not defined. Please provide a page number.");
         if(isNaN(page)) throw createError("Invalid page number. Please specify it in numeric format");
         return Math.trunc((this.elements.length + this.size-1) / this.size) < page;
     }
+
+    /**
+     * Check how much pages are there
+     * @returns {number} - Returns the amount of pages there are
+     */
 
     get MaxPages() {
         return Math.trunc((this.elements.length + this.size-1) / this.size);
@@ -123,5 +170,5 @@ function sliceObject(obj, a, b) {
 
     return object;
 }
-
+/** test */
 module.exports = pages;

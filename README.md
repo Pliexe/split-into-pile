@@ -1,4 +1,4 @@
-# split-into-pile
+# split-into-pile [![Build Status](https://travis-ci.org/Pliexe/split-into-pile.svg?branch=master)](https://travis-ci.org/Pliexe/split-into-pile)
 
 This module splits a array or a object into a specified size of batches!
 
@@ -77,6 +77,6 @@ pages.ObjectPages({ keyTemplate: '#{number}' }); // Returns {'#1':[2,4], '#2': [
 ```
   - { keySchema: array } - A schema of keys for result !Length of the schema array must be same as length of pages!
 ```js
-pages.ObjectPages({ keySchema: ['hello', 'example''] }); // Returns {'hello':[2,4], 'example': [3,5]}
+pages.ObjectPages({ keySchema: ['hello', 'example'] }); // Returns {'hello':[2,4], 'example': [3,5]}
 ```
   - keyTemplate and keySchema may not be used together!
