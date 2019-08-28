@@ -4,7 +4,8 @@
   "description": "Split object/array into specified size of batches",
   "main": "index.js",
   "scripts": {
-    "test": "node ./test/test.js"
+    "test": "node ./test/test.js",
+    "doc": "jsdoc index.js --destination ./docs/"
   },
   "repository": {
     "type" : "git",

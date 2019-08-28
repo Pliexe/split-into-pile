@@ -1,4 +1,8 @@
 /**
+ * @module split-into-pile
+ */
+
+/**
 * @exports split-into-pile.pages
 * @constructor
 * @param {Object|Array} data - Input the array or object that is going to be used for spliting into pages
