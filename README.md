@@ -1,4 +1,4 @@
-# split-into-pile [![Build Status](https://travis-ci.org/Pliexe/split-into-pile.svg?branch=master)](https://travis-ci.org/Pliexe/split-into-pile)
+# split-into-pile [![Build Status](https://travis-ci.org/Pliexe/split-into-pile.svg?branch=master)](https://travis-ci.org/Pliexe/split-into-pile) [Documentation](https://pliexe.github.io/split-into-pile/split-into-pile.pages.html)
 
 This module splits a array or a object into a specified size of batches!
 
@@ -9,7 +9,7 @@ This module splits a array or a object into a specified size of batches!
 
 
 to-do:
-  - Add sorting
+  - Suggest what to add next at github
 
 
 ### Installation
