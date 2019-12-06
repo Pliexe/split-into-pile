@@ -1,55 +1,70 @@
-/**
- * @module split-into-pile
- */
+Map.prototype.slice = function (start, end)
+{
+    return Array
+        .from(this.keys()).slice(start, end)
+        .reduce((m, k) => m.set(k, this.get(k)), new Map);
+}
 
-/**
-* @exports split-into-pile.pages
-* @constructor
-* @param {Object|Array} data - Input the array or object that is going to be used for spliting into pages
-* @param {number} size - Specify how much elements can be in one page
-* @returns {class} this - Returns this class
-*/
+Object.prototype.slice = function (start, end)
+{
+    let object = {};
+    Object.keys(this).slice(start, end).forEach(key => object[key] = this[key]);
+    return object;
+}
 
-class pages {
+function createError(msg)
+{
+    var err = new Error(msg);
+    Error.captureStackTrace(err, createError, pages.ObjectPages);
+    return err;
+}
 
-    constructor(data, size) {
+class pages
+{
+    /**
+     * Page formater
+     * @param {Map|Array|Object} data Takes array of any
+     * @param {Number} size Size of each page (The amount of elements in each page)
+     */
 
-        if((!!data) && (data.constructor === Array)) {
-            this.isArray = true;
-            this.elements = data;
-        }
-        else if ((!!data) && (data.constructor === Object)) {
-            this.isArray = false;
-            this.elements = data;
-        } else {
-            throw createError("Invalid data type. Please use a object or a array of elements for pages!");
-        }
-
+    constructor(data, size)
+    {
+        if (!data) throw createError("Missing parameter \"data\"");
         this.size = size || 10;
+        if (isNaN(this.size)) throw createError("Size may only be a number!");
 
-        this.pages = Math.trunc((this.elements.length + this.size-1) / this.size) || Math.trunc((Object.keys(this.elements).length + this.size-1) / this.size);
+
+        this.elements = data;
+
+        if (Array.isArray(this.elements))
+            this.datatype = "array";
+        else if (this.elements.constructor === Object)
+            this.datatype = "object";
+        else if (this.elements.constructor === Map)
+            this.datatype = "map";
+        else
+            throw createError("Invalid data type. Please use a object or a array of elements for pages!");
+
+        if (this.datatype === "array")
+            this.pages = Math.trunc((this.elements.length + this.size - 1) / this.size);
+        else if (this.datatype === "object")
+            this.pages = Math.trunc((Object.keys(this.elements).length + this.size - 1) / this.size);
+        else if (this.datatype === "map")
+            this.pages = Math.trunc((this.elements.size + this.size - 1) / this.size);
     }
 
     /**
-     * Returns the obj/array splited into pages in array format
+     * Returns the obj/array/map splited into pages in array format
      * @returns {Array} Returns array that contains elements splited into pages
      */
 
-    ArrayPages () {
-
+    ArrayPages()
+    {
         let ArrayListPages = [];
 
-        if (this.isArray) {
-            for (var i = 1; i < this.pages+1; i++) {
-                if (i === this.pages) ArrayListPages.push(this.elements.slice(i * this.size - this.size));
-                    else ArrayListPages.push(this.elements.slice(i * this.size - this.size, i * this.size));
-            }
-        } else {
-            for (var i = 1; i < this.pages+1; i++) {
-                if (i === this.pages) ArrayListPages.push(sliceObject(this.elements, i * this.size - this.size));
-                else ArrayListPages.push(sliceObject(this.elements, i * this.size - this.size, i * this.size));
-            }
-        }
+        for (var i = 1; i < this.pages + 1; i++)
+            if (i === this.pages) ArrayListPages.push(this.elements.slice(i * this.size - this.size));
+            else ArrayListPages.push(this.elements.slice(i * this.size - this.size, i * this.size));
 
         return ArrayListPages;
     }
@@ -64,52 +79,82 @@ class pages {
      * @example - KeySchema
      * const pages = require('split-into-pile')([2,4,3,5], 2);
      * pages.ObjectPages({ keySchema: ['hello', 'example'] }); // Returns {'hello':[2,4], 'example': [3,5]}
-     * @returns {Object} Returns array that contains elements splited into pages
+     * @returns {Object} Returns object that contains elements splited into pages
      */
 
-    ObjectPages(options) {
+    ObjectPages(options)
+    {
         let ObjectPages = {};
 
         options = options || {};
 
-        if(options.keyTemplate && options.keySchema) throw createError("You may not use keyTemplate and keySchema at once!");
+        if (options.keyTemplate && options.keySchema) throw createError("You may not use keyTemplate and keySchema at once!");
 
         let keyTemplate = options.keyTemplate || "{number}";
 
         if (keyTemplate.replace('{number}', '') === keyTemplate) throw createError("You have to give a number in template! Example keyTemplate: \"#{number}\"");
 
-        if(options.keySchema) {
+        if (options.keySchema) {
             if ((!!options.keySchem) && (options.keySchem.constructor != Array)) throw createError(`keySchema must be a array containing the same amount of keys as pages : This array/object contains ${this.pages} pages`);
-            if (options.keySchema.length != this.pages) throw createError(`keySchema array must be the same length as page count : This array/object contains ${this.pages} pages`);
+            if (options.keySchema.length != this.pages) throw createError(`keySchema array must be the same length as page count : This array/object/map contains ${this.pages} pages`);
 
-            if (this.isArray) {
-                for (var i = 1; i < this.pages+1; i++) {
-                    if (i === this.pages) ObjectPages[options.keySchema[i-1]] = this.elements.slice(i * this.size - this.size);
-                        else ObjectPages[options.keySchema[i-1]] = this.elements.slice(i * this.size - this.size, i * this.size);
-                }
-            } else {
-                for (var i = 1; i < this.pages+1; i++) {
-                    if (i === this.pages) ObjectPages[options.keySchema[i-1]] = sliceObject(this.elements, i * this.size - this.size);
-                    else ObjectPages[options.keySchema[i-1]] = sliceObject(this.elements, i * this.size - this.size, i * this.size);
-                }
+            for (var i = 1; i < this.pages + 1; i++) {
+                if (i === this.pages) ObjectPages[options.keySchema[i - 1]] = this.elements.slice(i * this.size - this.size);
+                else ObjectPages[options.keySchema[i - 1]] = this.elements.slice(i * this.size - this.size, i * this.size);
             }
         } else {
-            if (this.isArray) {
-                for (var i = 1; i < this.pages+1; i++) {
-                    if (i === this.pages) ObjectPages[keyTemplate.replace('{number}', i)] = this.elements.slice(i * this.size - this.size);
-                        else ObjectPages[keyTemplate.replace('{number}', i)] = this.elements.slice(i * this.size - this.size, i * this.size);
-                }
-            } else {
-                for (var i = 1; i < this.pages+1; i++) {
-                    if (i === this.pages) ObjectPages[keyTemplate.replace('{number}', i)] = sliceObject(this.elements, i * this.size - this.size);
-                    else ObjectPages[keyTemplate.replace('{number}', i)] = sliceObject(this.elements, i * this.size - this.size, i * this.size);
-                }
+            for (var i = 1; i < this.pages + 1; i++) {
+                if (i === this.pages) ObjectPages[keyTemplate.replace('{number}', i)] = this.elements.slice(i * this.size - this.size);
+                else ObjectPages[keyTemplate.replace('{number}', i)] = this.elements.slice(i * this.size - this.size, i * this.size);
             }
         }
 
-
-
         return ObjectPages;
+    }
+
+    /**
+     * Returns the obj/array/map splited into pages in Map() format
+     * @param {object} options - Options for output
+     * @param {string} options.keyTemplate - Output with specific keyname (per page)
+     * @param {Array} options.keySchema - Array that contains every key for every new map entry (page)
+     * @example - KeyTemplate
+     * MapPages({ keyTemplate: '#{number}' }); // "Number" will be auto replaced with the numeric order of the elements
+     * @example - KeySchema
+     * const pages = require('split-into-pile')([2,4,3,5], 2);
+     * pages.MapPages({ keySchema: ['hello', 'example'] }); // Returns {'hello':[2,4], 'example': [3,5]}
+     * @returns {Map} Returns map that contains elements splited into pages
+     */
+
+    MapPages(options)
+    {
+        let MapPages = new Map();
+
+        options = options || {};
+
+        if (options.keyTemplate && options.keySchema) throw createError("You may not use keyTemplate and keySchema at once!");
+
+        let keyTemplate = options.keyTemplate || "{number}";
+
+        if (keyTemplate.replace('{number}', '') === keyTemplate) throw createError("You have to give a number in template! Example keyTemplate: \"#{number}\"");
+
+        console.log(keyTemplate.replace('{number}', i).constructor.toString());
+
+        if (options.keySchema) {
+            if ((!!options.keySchem) && (options.keySchem.constructor != Array)) throw createError(`keySchema must be a array containing the same amount of keys as pages : This array/object contains ${this.pages} pages`);
+            if (options.keySchema.length != this.pages) throw createError(`keySchema array must be the same length as page count : This array/object/map contains ${this.pages} pages`);
+
+            for (var i = 1; i < this.pages + 1; i++) {
+                if (i === this.pages) MapPages.set(options.keySchema[i - 1], this.elements.slice(i * this.size - this.size));
+                else MapPages.set(options.keySchema[i - 1], this.elements.slice(i * this.size - this.size, i * this.size));
+            }
+        } else {
+            for (var i = 1; i < this.pages + 1; i++) {
+                if (i === this.pages) MapPages.set(options.keyTemplate ? keyTemplate.replace('{number}', i) : i, this.elements.slice(i * this.size - this.size));
+                else MapPages.set(options.keyTemplate ? keyTemplate.replace('{number}', i) : i, this.elements.slice(i * this.size - this.size, i * this.size));
+            }
+        }
+
+        return MapPages;
     }
 
     /**
@@ -118,25 +163,16 @@ class pages {
      * @example
      * const pages = require('split-into-pile')([2,5,6,8], 2);
      * pages.GetPageContent(2); // Returns [6, 8]
-     * @return {object|array} - Returns one page 
+     * @return {Object|Array|Map} - Returns one page 
      */
 
-    GetPageContent(page) {
-        if(!page) throw createError("Page number not defined. Please provide a page number.")
-        if(isNaN(page)) throw createError("Invalid page number. Please specify it in numeric format");
-        if(page > this.pages) throw createError("This page does not exist. You can check if a page exists with .PageExists();");
+    GetPageContent(page)
+    {
+        if (!page) throw createError("Page number not defined. Please provide a page number.")
+        if (isNaN(page)) throw createError("Invalid page number. Please specify it in numeric format");
+        if (page > this.pages) throw createError("This page does not exist. You can check if a page exists with .PageExists();");
 
-        let pageElements;
-
-        if (this.isArray) {
-            if(page === this.pages) pageElements = this.elements.slice(page * this.size - this.size);
-                else pageElements = this.elements.slice(page * this.size - this.size, page * this.size);
-        } else {
-            if (page === this.pages) pageElements = sliceObject(this.elements, page * this.size - this.size);
-                else pageElements = sliceObject(this.elements, page * this.size - this.size, page * this.size);
-        }
-
-        return pageElements;
+        return page === this.pages ? pageElements = this.elements.slice(page * this.size - this.size) : pageElements = this.elements.slice(page * this.size - this.size, page * this.size);
     }
 
     /**
@@ -145,10 +181,11 @@ class pages {
      * @returns {boolean} - Returns if the page exists
      */
 
-    PageExist(page) {
-        if(!page) throw createError("Page number not defined. Please provide a page number.");
-        if(isNaN(page)) throw createError("Invalid page number. Please specify it in numeric format");
-        return Math.trunc((this.elements.length + this.size-1) / this.size) < page;
+    PageExist(page)
+    {
+        if (!page) throw createError("Page number not defined. Please provide a page number.");
+        if (isNaN(page)) throw createError("Invalid page number. Please specify it in numeric format");
+        return Math.trunc(((this.elements.length || this.elements.size || Object.keys(this.elements)) + this.size - 1) / this.size) < page;
     }
 
     /**
@@ -156,23 +193,10 @@ class pages {
      * @returns {number} - Returns the amount of pages there are
      */
 
-    get MaxPages() {
-        return Math.trunc((this.elements.length + this.size-1) / this.size);
+    get MaxPages()
+    {
+        return Math.trunc((this.elements.length || this.elements.size || Object.keys(this.elements)) / this.size);
     }
 }
 
-function createError(msg) {
-    var err = new Error(msg);
-    Error.captureStackTrace(err, pages);
-    return err;
-}
-
-function sliceObject(obj, a, b) {
-    let object = {};
-    if(!b) Object.keys(obj).slice(a).forEach(key => object[key] = obj[key]);
-        else Object.keys(obj).slice(a, b).forEach(key => object[key] = obj[key]);
-
-    return object;
-}
-/** test */
 module.exports = pages;
