@@ -1,6 +1,6 @@
 {
   "name": "split-into-pile",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Split object/array into specified size of batches",
   "main": "index.js",
   "scripts": {
@@ -8,8 +8,8 @@
     "doc": "jsdoc index.js --destination ./docs/"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/Pliexe/split-into-pile"
+    "type": "git",
+    "url": "https://github.com/Pliexe/split-into-pile"
   },
   "keywords": [
     "split",
@@ -17,7 +17,9 @@
     "object",
     "page",
     "list",
-    "batches"
+    "batches",
+    "map",
+    "split-into-pile"
   ],
   "author": "Pliexe || DiamondZombie",
   "license": "MIT"
