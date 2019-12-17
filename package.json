@@ -1,6 +1,6 @@
 {
   "name": "split-into-pile",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Split object/array into specified size of batches",
   "main": "index.js",
   "scripts": {
