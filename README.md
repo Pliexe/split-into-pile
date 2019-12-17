@@ -71,7 +71,7 @@ let pages = new splitintopile(map);
 console.log(pages.ArrayPages()); // Returns [[ { 1 => 2, 'three'=> 5 }], [ 'test' => 'example' ]]
 ```
 
-# Systax
+# Syntax
   - Example of using the plugin methods
 ```js
 const splitintopile = require('split-into-pile');
