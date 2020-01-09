@@ -7,9 +7,10 @@ Map.prototype.slice = function (start, end)
 
 Object.prototype.slice = function (start, end)
 {
-    let object = {};
-    Object.keys(this).slice(start, end).forEach(key => object[key] = this[key]);
-    return object;
+
+    return Object.keys(this)
+        .slice(start, end)
+        .reduce((o, k) => { o[k] = this[k]; return o; }, {});
 }
 
 function createError(msg)

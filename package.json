@@ -22,5 +22,9 @@
     "split-into-pile"
   ],
   "author": "Pliexe",
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Pliexe/split-into-pile/issues"
+  },
+  "homepage": "https://github.com/Pliexe/split-into-pile#readme"
 }
